@@ -1,0 +1,54 @@
+public class ContaBancaria {
+    protected double saldo;
+
+    public ContaBancaria(double saldoInicial) {
+        this.saldo = saldoInicial;
+    }
+
+    public void depositar(double valor) {
+        saldo += valor;
+    }
+
+    public void sacar(double valor) {
+        saldo -= valor;
+    }
+
+    public double getSaldo() {
+        return saldo;
+    }
+
+public class ContaCorrente extends ContaBancaria {
+    public ContaCorrente(double saldoInicial) {
+        super(saldoInicial);
+    }
+}
+
+public class ContaSalario extends ContaBancaria {
+    public ContaSalario(double saldoInicial) {
+        super(saldoInicial);
+    }
+}
+
+// Implementa as outras classes de conta (poupança, investimento e etc)
+
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
+import org.aspectj.lang.annotation.Pointcut;
+
+@Aspect
+public class VerificacaoSaldoAspect {
+
+    @Pointcut("execution(void ContaBancaria.sacar(double)) && args(valor)")
+    public void sacarOperation(double valor) {
+    }
+
+    @Before("sacarOperation(valor)")
+    public void verificarSaldo(double valor) {
+        System.out.println("Verificando saldo antes do saque...");
+        if (valor > ContaBancariaHelper.getSaldo()) {
+            System.out.println("Saldo insuficiente na conta.");
+            throw new SaldoInsuficienteException("Saldo insuficiente na conta.");
+        }
+    }
+}
+
